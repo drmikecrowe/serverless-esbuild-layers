@@ -36,7 +36,7 @@ You also need to configure `serverless-esbuild` to externalise all node modules:
 custom:
   esbuild:
     plugins: esbuild-plugins.js
-    packages: 'external',
+    packages: 'external'  
 ```
 
 the [serverless-esbuild][esbuild-plugins] library supports custom plugins to configure esbuild. In order to leverage this library, you need to use [esbuild-node-externals][esbuild-node-externals] to externalise all node modules
@@ -50,8 +50,16 @@ module.exports = [nodeExternalsPlugin()];
 
 For more complex configurations, you may also use a full javascript configuration file:
 
+- `serverless.yml`:
+
+```yaml
+  esbuild:
+    config: './esbuild.config.cjs'
+```
+
+- `esbuild.config.cjs`:
+
 ```js
-// esbuild.config.cjs
 const { nodeExternalsPlugin } = require('esbuild-node-externals')
 
 module.exports = (serverless) => {
