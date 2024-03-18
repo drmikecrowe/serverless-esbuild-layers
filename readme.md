@@ -21,6 +21,7 @@ pnpm install --dev serverless-esbuild-layers serverless-esbuild esbuild-node-ext
 ```
 
 ### Setup
+
 Once installed, you need to add this to your serverless plugins:
 
 ```yaml
@@ -35,16 +36,39 @@ You also need to configure `serverless-esbuild` to externalise all node modules:
 custom:
   esbuild:
     plugins: esbuild-plugins.js
-    exclude:
-      - '*'
+    packages: 'external',
 ```
 
 the [serverless-esbuild][esbuild-plugins] library supports custom plugins to configure esbuild. In order to leverage this library, you need to use [esbuild-node-externals][esbuild-node-externals] to externalise all node modules
 
 ```js
+// esbuild-plugins.js
 const { nodeExternalsPlugin } = require('esbuild-node-externals');
 
 module.exports = [nodeExternalsPlugin()];
+```
+
+For more complex configurations, you may also use a full javascript configuration file:
+
+```js
+// esbuild.config.cjs
+const { nodeExternalsPlugin } = require('esbuild-node-externals')
+
+module.exports = (serverless) => {
+  return {
+    package: 'external'
+    platform: 'node',
+    bundle: true,
+    minify: false,
+    sourcemap: false,
+    treeShaking: true,
+    plugins: [
+      nodeExternalsPlugin({
+        "allowWorkspaces": true
+      }),
+    ]
+  }
+}
 ```
 
 ### Adding layers
@@ -54,11 +78,11 @@ Once the plugin is configured in your serverless file, you need to add Layer def
 ```yaml
 layers:
   lib:
-    path: '.serverless'
+    path: '.serverless/layer'
     name: my-modules
     description: node_modules
     compatibleRuntimes:
-      - nodejs14.x
+      - nodejs20.x
 ```
 
 Then you can reference the relevant layers in each function (the ref should match `NameLambdaLayer` where name is the key of your layer with the first character uppercase)
