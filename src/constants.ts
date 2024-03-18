@@ -25,6 +25,7 @@ export const DEFAULT_CONFIG: Config = {
   minify: false,
   forceExclude: [],
   forceInclude: [],
+  layerNodePath: 'nodejs',
 };
 
 export const DEFAULT_AWS_MODULES: string[] = ['aws-sdk'];

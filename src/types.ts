@@ -44,6 +44,7 @@ export type Config = {
   forceExclude: string[];
   forceInclude: string[];
   packageJsonPath?: string;
+  layerNodePath: string | 'nodejs';
 };
 
 export enum Level {

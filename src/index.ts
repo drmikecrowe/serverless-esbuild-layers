@@ -109,7 +109,7 @@ class EsbuildLayersPlugin implements Plugin {
     const installedLayers: Layer[] = [];
     const layers = getLayers(this.serverless);
     for (const [name, layer] of Object.entries(layers)) {
-      const installed = await this.installLayer(layer, name);
+      const installed = await this.installLayer(layer, name, this.config.layerNodePath);
       if (!installed) continue;
       await this.cleanup(layer.path);
       installedLayers.push(layer);
@@ -205,10 +205,10 @@ class EsbuildLayersPlugin implements Plugin {
    * @param layerName the name of the object
    * @returns a boolean to indicate whether it was installed
    */
-  async installLayer(layer: Layer, layerName: string): Promise<boolean> {
+  async installLayer(layer: Layer, layerName: string, nodeName = 'nodejs'): Promise<boolean> {
     try {
       const { path: localPath } = layer;
-      const nodeLayerPath = `${localPath}/nodejs`;
+      const nodeLayerPath = `${localPath}/${nodeName}`;
       const packageJsonPath = path.join(nodeLayerPath, 'package.json');
       if (!fs.existsSync(nodeLayerPath)) {
         await fs.promises.mkdir(nodeLayerPath, { recursive: true });
